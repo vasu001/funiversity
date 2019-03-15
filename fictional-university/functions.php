@@ -1,5 +1,20 @@
 <?php
 
+    /**
+     * Require Custom REST API Route file
+     */
+    require get_theme_file_path( '/inc/search-route.php' );
+
+    /**
+     * Register Custom REST API Field in the Callback
+     */
+
+    function funiversity_addRestField() {
+        register_rest_field( 'post', 'authorName', [
+            'get_callback' => function() {return get_the_author(); }
+        ] );
+    }
+    add_action('rest_api_init', 'funiversity_addRestField');
 
     /**
      * Custom Styles:
@@ -9,13 +24,18 @@
      *      Custom Scripts: js/scripts-bundled.js
      */
     function funiversity_styler() {
+
         wp_enqueue_style('google-fonts', '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
         wp_enqueue_style('fontawesome-4.7.0', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+        wp_enqueue_style('bootstrapcdn', '//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css');
         wp_enqueue_style( 'custom_style', get_stylesheet_uri(), NULL, microtime(), false);        
         
         wp_deregister_script( 'jquery' );
         wp_enqueue_script('jquery', '//code.jquery.com/jquery-3.3.1.js', NULL, 1.0, true);
         wp_enqueue_script('custom-scripts', get_template_directory_uri(  ) . '/js/scripts.js', NULL, microtime(), true);
+        wp_localize_script( 'custom-scripts', 'universityData', [
+            'root_url' => get_site_url()
+        ] );
     }
     add_action( 'wp_enqueue_scripts', 'funiversity_styler' );
 
